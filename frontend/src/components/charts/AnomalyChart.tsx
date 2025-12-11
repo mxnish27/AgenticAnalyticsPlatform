@@ -16,7 +16,7 @@ import {
   LineChart,
   Line
 } from 'recharts';
-import { Anomaly } from '../types';
+import { Anomaly } from '../../types';
 
 interface AnomalyChartProps {
   data: Anomaly[];

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { ChartBarIcon, PlusIcon, RefreshIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, PlusIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { Metric } from '../types';
 import { apiService } from '../services/api';
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -83,7 +83,7 @@ export const Metrics: React.FC = () => {
             onClick={handleRefresh}
             className="btn-secondary flex items-center"
           >
-            <RefreshIcon className="h-4 w-4 mr-2" />
+            <ArrowPathIcon className="h-4 w-4 mr-2" />
             Refresh
           </button>
         </div>

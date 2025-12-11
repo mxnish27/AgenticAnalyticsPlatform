@@ -5,7 +5,7 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   ClockIcon,
-  RefreshIcon
+  ArrowPathIcon
 } from '@heroicons/react/24/outline';
 import { CICDPipeline } from '../types';
 import { apiService } from '../services/api';
@@ -96,7 +96,7 @@ export const CICD: React.FC = () => {
           onClick={handleRefresh}
           className="btn-secondary flex items-center"
         >
-          <RefreshIcon className="h-4 w-4 mr-2" />
+          <ArrowPathIcon className="h-4 w-4 mr-2" />
           Refresh
         </button>
       </div>

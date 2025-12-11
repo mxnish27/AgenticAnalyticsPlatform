@@ -16,7 +16,7 @@ import {
   Pie,
   Cell
 } from 'recharts';
-import { Metric } from '../types';
+import { Metric } from '../../types';
 
 interface MetricChartProps {
   data: Metric[];

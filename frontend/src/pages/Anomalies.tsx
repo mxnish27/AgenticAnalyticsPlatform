@@ -3,8 +3,8 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import {
   ExclamationTriangleIcon,
   CheckCircleIcon,
-  RefreshIcon,
-  SearchIcon
+  ArrowPathIcon,
+  MagnifyingGlassIcon
 } from '@heroicons/react/24/outline';
 import { Anomaly } from '../types';
 import { apiService } from '../services/api';
@@ -100,7 +100,7 @@ export const Anomalies: React.FC = () => {
           onClick={handleRefresh}
           className="btn-secondary flex items-center"
         >
-          <RefreshIcon className="h-4 w-4 mr-2" />
+          <ArrowPathIcon className="h-4 w-4 mr-2" />
           Refresh
         </button>
       </div>

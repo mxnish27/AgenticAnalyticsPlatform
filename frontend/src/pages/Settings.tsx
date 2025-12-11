@@ -92,7 +92,7 @@ export const Settings: React.FC = () => {
   };
 
   const handleDelete = (id: number) => {
-    if (confirm('Are you sure you want to delete this data source?')) {
+    if (window.confirm('Are you sure you want to delete this data source?')) {
       deleteMutation.mutate(id);
     }
   };

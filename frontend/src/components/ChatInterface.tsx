@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { SendIcon, BotIcon, UserIcon, LoaderIcon } from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon, CpuChipIcon, UserIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { apiService } from '../services/api';
 
 interface Message {
@@ -123,7 +123,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     <div className={`flex flex-col h-full bg-white rounded-lg border border-gray-200 ${className}`}>
       {/* Header */}
       <div className="flex items-center p-4 border-b border-gray-200">
-        <BotIcon className="h-5 w-5 text-blue-600 mr-2" />
+        <CpuChipIcon className="h-5 w-5 text-blue-600 mr-2" />
         <h3 className="text-lg font-medium text-gray-900">AI Analytics Assistant</h3>
       </div>
 
@@ -139,7 +139,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             {message.sender === 'bot' && (
               <div className="flex-shrink-0">
                 <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <BotIcon className="h-4 w-4 text-blue-600" />
+                  <CpuChipIcon className="h-4 w-4 text-blue-600" />
                 </div>
               </div>
             )}
@@ -175,7 +175,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <LoaderIcon className="h-4 w-4 text-blue-600 animate-spin" />
+                <ArrowPathIcon className="h-4 w-4 text-blue-600 animate-spin" />
               </div>
             </div>
             <div className="bg-gray-100 text-gray-900 max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
@@ -222,7 +222,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             disabled={!input.trim() || isLoading}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            <SendIcon className="h-4 w-4" />
+            <PaperAirplaneIcon className="h-4 w-4" />
           </button>
         </div>
       </div>
