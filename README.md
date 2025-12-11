@@ -82,6 +82,4 @@ JWT_SECRET_KEY=your_jwt_secret
 4. Add tests
 5. Submit a pull request
 
-## License
 
-MIT License
