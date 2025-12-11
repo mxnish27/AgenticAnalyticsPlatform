@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: agentic-analytics
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: analytics_db
+        - name: POSTGRES_USER
+          value: analytics_user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: analytics-secrets
+              key: DATABASE_PASSWORD
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+        - name: postgres-config
+          mountPath: /docker-entrypoint-initdb.d
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+      volumes:
+      - name: postgres-config
+        configMap:
+          name: postgres-init
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 20Gi
+      storageClassName: fast-ssd
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: agentic-analytics
+spec:
+  selector:
+    app: postgres
+  ports:
+  - port: 5432
+    targetPort: 5432
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+  namespace: agentic-analytics
+data:
+  init.sql: |
+    -- Initialize database extensions
+    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+    CREATE EXTENSION IF NOT EXISTS "pg_stat_statements";
+    
+    -- Create indexes for better performance
+    CREATE INDEX IF NOT EXISTS idx_metrics_timestamp ON metrics(timestamp);
+    CREATE INDEX IF NOT EXISTS idx_metrics_name ON metrics(name);
+    CREATE INDEX IF NOT EXISTS idx_anomalies_detected_at ON anomalies(detected_at);
+    CREATE INDEX IF NOT EXISTS idx_logs_timestamp ON logs(timestamp);
+    CREATE INDEX IF NOT EXISTS idx_logs_level ON logs(level);
+    
+    -- Insert sample data
+    INSERT INTO metrics (name, value, unit, source, timestamp, tags, metadata, created_at) VALUES
+    ('cpu_usage_percent', 45.2, 'percent', 'prometheus', NOW() - INTERVAL '1 hour', '{"instance": "web-1"}', '{}', NOW()),
+    ('memory_usage_percent', 67.8, 'percent', 'prometheus', NOW() - INTERVAL '1 hour', '{"instance": "web-1"}', '{}', NOW()),
+    ('disk_usage_percent', 23.4, 'percent', 'prometheus', NOW() - INTERVAL '1 hour', '{"instance": "web-1"}', '{}', NOW()),
+    ('network_bytes_sent', 1024576, 'bytes', 'prometheus', NOW() - INTERVAL '1 hour', '{"instance": "web-1"}', '{}', NOW()),
+    ('response_time_ms', 125.5, 'milliseconds', 'prometheus', NOW() - INTERVAL '1 hour', '{"instance": "web-1"}', '{}', NOW());

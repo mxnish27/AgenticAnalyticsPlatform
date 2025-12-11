@@ -1,0 +1,128 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-agents
+  namespace: agentic-analytics
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ai-agents
+  template:
+    metadata:
+      labels:
+        app: ai-agents
+    spec:
+      containers:
+      - name: ai-agents
+        image: agentic-analytics/ai-agents:latest
+        ports:
+        - containerPort: 8001
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: analytics-config
+              key: DATABASE_URL
+        - name: REDIS_URL
+          valueFrom:
+            configMapKeyRef:
+              name: analytics-config
+              key: REDIS_URL
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: analytics-secrets
+              key: OPENAI_API_KEY
+        - name: AGENT_TIMEOUT
+          valueFrom:
+            configMapKeyRef:
+              name: analytics-config
+              key: AGENT_TIMEOUT
+        - name: ANOMALY_THRESHOLD
+          valueFrom:
+            configMapKeyRef:
+              name: analytics-config
+              key: ANOMALY_THRESHOLD
+        - name: MAX_DATA_POINTS
+          valueFrom:
+            configMapKeyRef:
+              name: analytics-config
+              key: MAX_DATA_POINTS
+        - name: LOG_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: analytics-config
+              key: LOG_LEVEL
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1000m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        volumeMounts:
+        - name: ai-agents-data
+          mountPath: /app/data
+        - name: ai-agents-logs
+          mountPath: /app/logs
+      volumes:
+      - name: ai-agents-data
+        emptyDir: {}
+      - name: ai-agents-logs
+        emptyDir: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-agents
+  namespace: agentic-analytics
+spec:
+  selector:
+    app: ai-agents
+  ports:
+  - port: 8001
+    targetPort: 8001
+  type: ClusterIP
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ai-agents-hpa
+  namespace: agentic-analytics
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ai-agents
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80

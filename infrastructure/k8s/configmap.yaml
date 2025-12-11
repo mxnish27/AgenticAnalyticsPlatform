@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: analytics-config
+  namespace: agentic-analytics
+data:
+  DATABASE_URL: "postgresql://analytics_user:analytics_password@postgres:5432/analytics_db"
+  REDIS_URL: "redis://redis:6379"
+  PROMETHEUS_URL: "http://prometheus:9090"
+  GRAFANA_URL: "http://grafana:3001"
+  AIRFLOW_URL: "http://airflow:8080"
+  LOG_LEVEL: "INFO"
+  DEBUG: "false"
+  AGENT_TIMEOUT: "30"
+  MAX_RETRIES: "3"
+  BATCH_SIZE: "100"
+  ANOMALY_THRESHOLD: "0.7"
+  ANOMALY_CONFIDENCE: "0.8"
+  MAX_DATA_POINTS: "10000"
+  DATA_RETENTION_DAYS: "30"
